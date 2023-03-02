@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Web Push Demo</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+  <script src="ua-parser.min.js"></script>
+  <script src="localforage.min.js"></script>
+  <script src="script.js"></script>
+  <style>
+    .icon-list li::before {
+      display: block;
+      flex-shrink: 0;
+      width: 1.5em;
+      height: 1.5em;
+      margin-right: .5rem;
+      content: "";
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23212529' viewBox='0 0 16 16'%3E%3Cpath d='M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z'/%3E%3C/svg%3E") no-repeat center center / 100% auto;
+    }
+  </style>
+</head>
+<body>
+<div class="col-lg-8 mx-auto p-4 py-md-5">
+  <header class="d-flex align-items-center pb-3 mb-5 border-bottom">
+    <a href="/" class="d-flex align-items-center text-dark text-decoration-none">
+      <span class="fs-4">Adobe Demo Site</span>
+    </a>
+  </header>
+
+  <main>
+    <div id="liveAlertPlaceholder"></div>
+    <h1>Exercitation elit reprehenderit magna.</h1>
+    <p class="fs-5 col-md-8">Mollit consequat ea sunt occaecat sit officia eu anim irure cillum. Eiusmod proident commodo aliquip mollit culpa. Adipisicing exercitation sint pariatur esse esse dolore cillum ea qui. Commodo aute eiusmod ut pariatur irure anim cupidatat ut commodo enim enim.</p>
+
+    <div class="mb-5">
+      <a href="#" class="btn btn-primary btn-lg px-4">Pariatur elit mollit</a>
+    </div>
+
+    <hr class="col-3 col-md-2 mb-5">
+
+    <div class="row g-5">
+      <div class="col-md-6">
+        <h2>Qui magna</h2>
+        <p>Voluptate ut ipsum excepteur laboris qui excepteur commodo. Magna enim do deserunt exercitation Lorem id in esse ad exercitation sint occaecat. Ipsum sint amet ullamco aliqua. Eu cupidatat deserunt pariatur cillum cupidatat.</p>
+        <ul class="icon-list ps-0">
+          <li class="d-flex align-items-start mb-1"><a href="#" rel="noopener" target="_blank">Dolore ut fugiat culpa officia culpa</a></li>
+          <li class="text-muted d-flex align-items-start mb-1">In dolor ipsum do esse. Consectetur velit quis non proident amet adipisicing excepteur exercitation magna consectetur.</li>
+        </ul>
+      </div>
+
+      <div class="col-md-6">
+        <h2>Send a local message</h2>
+        <p>Culpa duis fugiat laborum ipsum fugiat eu. Ut irure fugiat esse laboris laboris commodo sint aliqua est voluptate.</p>
+        <form id="notify-form">
+          <div class="mb-3">
+            <label for="notify-title" class="form-label">Message title</label>
+            <input type="text" class="form-control" id="notify-title" value="Greetings">
+          </div>
+          <div class="mb-3">
+            <label for="notify-body" class="form-label">Message body</label>
+            <input type="text" class="form-control" id="notify-body" value="Hello world!">
+          </div>
+          <button id="btn-notify" type="submit" class="btn btn-primary">Send</button>
+        </form>
+      </div>
+    </div>
+  </main>
+  <footer class="pt-5 my-5 text-muted border-top">
+    Created by Pariatur Sunt &middot; &copy; 2023
+  </footer>
+</div>
+
+<script>
+
+  function promptGivePermission() {
+    const wrapper = document.createElement('div')
+    wrapper.innerHTML = [
+      `<div class="alert alert-warning alert-dismissible" role="alert">`,
+      `   <div><strong>Hey, stay informed!</strong> Would you like to recieve push notifications from us? <a href="#" id="obtain-notification-permission" data-action="yes" class="alert-link" data-bs-dismiss="alert">Sure!</a></div>`,
+      '   <button type="button" data-action="no" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
+      '</div>'
+    ].join('')
+
+    document.getElementById('liveAlertPlaceholder').append(wrapper);
+
+    return new Promise((resolve, reject) => {
+      document.getElementById("obtain-notification-permission").addEventListener('click', evt => {
+        evt.preventDefault();
+        evt.stopImmediatePropagation();
+        resolve();
+      });
+    });
+  }
+
+  document.getElementById("notify-form").addEventListener("submit", evt => {
+    evt.preventDefault();
+    evt.stopImmediatePropagation();
+
+    window.alloyMessaging.notify(evt.target.elements[0].value, evt.target.elements[1].value);
+  });
+
+  if(!window.alloyMessaging.hasNotifyPermissionAlready()) {
+    promptGivePermission().then(evt => {
+      window.alloyMessaging.obtainNotifyPermission();
+    });
+  }
+
+  window.alloyMessaging.configure({
+    // vapidPublicKey: "BAUT4Tnm-tS5dfuWCHNR6yMLgbJPcN8HYlwW-Ui01ylDletJA82QA3IuNAiA69Y0CieyGwwNBQM6Q76KQEwM1jU"
+  });
+
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+</body>
+</html>

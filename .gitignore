@@ -1,0 +1,33 @@
+### Node template
+# Logs
+logs
+*.log
+npm-debug.log*
+
+.DS_Store
+
+# Dependency directories
+node_modules
+jspm_packages
+bower_components
+
+# Optional npm cache directory
+.npm
+
+# Optional REPL history
+.node_repl_history
+
+# Build result
+dist
+build
+
+# Documentation
+docs
+
+# TypeScript definitions
+typings
+
+# IDEA
+.idea/
+
+.env
